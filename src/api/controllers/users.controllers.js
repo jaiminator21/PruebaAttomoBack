@@ -4,6 +4,8 @@ const { validateEmail, validatePassword, usedEmail } = require("../../utils/vali
 const bcrypt = require("bcrypt");
 
 const register = async (req, res) => {
+  console.log(req.body);
+  
   try {
     const newUser = new User(req.body);
     if (!validateEmail(newUser.email)) { //using validators to check if the email is valid
@@ -38,18 +40,22 @@ const register = async (req, res) => {
 };
 
 const login = async (req, res) => {
- // console.log(req.body);
+  console.log(req.body);
   try {
     const userInfo = await User.findOne({ email: req.body.email }); //after the isAuth, it searches for the email that it recived 
+    console.log("Informacion del usuario",userInfo);
+    
     if (!userInfo) {//if there is no user
       return res.status(404).json({ message: "This user doesn't exist" });
     }
     if (!bcrypt.compareSync(req.body.password, userInfo.password)) { // after decypting the passwords it checks if they are the same
       return res.status(404).json({ message: "The passwords isn't correct" });
     }
-    const token = generateSign(userInfo._id, userInfo.email); //generates token
+    const token = generateSign(userInfo._id, userInfo.email, userInfo.username, userInfo._id); //generates token
     return res.status(200).json({ user: userInfo, token: token });
   } catch (error) {
+    console.log(error);
+    
     return res.status(500).json(error);
   }
 };
