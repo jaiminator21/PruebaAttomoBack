@@ -5,7 +5,6 @@ const bcrypt = require("bcrypt");
 
 const register = async (req, res) => {
   console.log(req.body);
-  
   try {
     const newUser = new User(req.body);
     if (!validateEmail(newUser.email)) { //using validators to check if the email is valid
@@ -51,7 +50,7 @@ const login = async (req, res) => {
     if (!bcrypt.compareSync(req.body.password, userInfo.password)) { // after decypting the passwords it checks if they are the same
       return res.status(404).json({ message: "The passwords isn't correct" });
     }
-    const token = generateSign(userInfo._id, userInfo.email, userInfo.username, userInfo._id); //generates token
+    const token = generateSign(userInfo._id, userInfo.email, userInfo.username, userInfo._id, userInfo.votes); //generates token
     return res.status(200).json({ user: userInfo, token: token });
   } catch (error) {
     console.log(error);
@@ -90,6 +89,7 @@ const putUser = async (req, res) => {
 
 
 const checkSession = (req, res) => {
+  console.log("me llaman");
   try {
     return res.status(201).json(req.user);
   } catch (error) {
@@ -97,8 +97,9 @@ const checkSession = (req, res) => {
   }
 };
 
+
+
 const checkVotes = (req, res) => {
-  maxVotes = 5;
   try {
     return res.status(201).json(req.user);
   } catch (error) {

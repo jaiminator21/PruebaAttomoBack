@@ -18,10 +18,7 @@ const userSchema = new mongoose.Schema({
     trim: true,
     required: true,
   },
-  votes: {
-    type: Number,
-    default:0,
-  },
+  votes:  [{ type: mongoose.Schema.Types.ObjectId, ref: "Game" }],
   role: {
     type: String,
     default: "user",
