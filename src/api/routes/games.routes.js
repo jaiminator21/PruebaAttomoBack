@@ -11,8 +11,8 @@ const gamesRouter = express.Router();
 
 gamesRouter.get("/", getGames);
 gamesRouter.get("/:id", getGameById);
-gamesRouter.post("/",  upload.single('cover') , postGame);
+gamesRouter.post("/",  [isAuth],upload.single('cover') , postGame);
 gamesRouter.put("/:id", [isAuth], putGame);
-gamesRouter.delete("/:id", deleteGame);
+gamesRouter.delete("/:id", [isAuth],deleteGame);
 
 module.exports = gamesRouter;
