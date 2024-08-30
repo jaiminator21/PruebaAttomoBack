@@ -8,6 +8,7 @@ const commentSchema = new Schema(
       type: String, // Contenido del comentario
       required: true,
     },
+
     date: {
       type: Date, // Fecha del comentario
       default: Date.now,

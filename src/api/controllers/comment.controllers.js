@@ -1,50 +1,87 @@
 const Comment = require("../models/comment.model");
-const Game = require("../models/games.model"); // Import the Game model
+const User = require("../models/users.model");
+const Game = require("../models/games.model");
 const bcrypt = require("bcrypt");
 
-/* const getComments = async (req, res) => {
+
+
+const postComment = async (req, res, next) => {
+ 
+  try {
+    const userId = req.user._id; // Obtén el ID del usuario autenticado
+    const gameId = req.body.gameId; // Asume que el ID del juego se pasa en el cuerpo de la solicitud
+    const content = req.body.content; // Asume que el ID del juego se pasa en el cuerpo de la solicitud
+    console.log(req.body);
+    
+    if (!gameId) {
+      return res.status(400).json({ message: "Game ID is required." });
+    }
+
+    // Crear el comentario
+    const comment = await Comment.create({
+      ...req.body,
+      owner: userId, // Asocia el comentario con el usuario autenticado
+      content: content
+    });
+
+    // Actualizar el juego con el nuevo comentario
+
+
+    // Enviar respuesta al cliente
+    res.status(201).json({
+      status: 201,
+      message: "Comment created successfully.",
+      data: comment,
+    });
+  } catch (error) {
+    // Manejar errores específicos
+    next(error);
+  }
+};
+
+module.exports = {
+  postComment,
+};
+
+
+const s = async (req, res) => {
   console.log(req);
+
   try {
-    const comments = await Comment.find(); // Retrieve all games from the database using the Game model
-    return res.status(200).json(game); // Return a JSON response with status 200 containing all games
+    const { owner, content } = req.body;
+
+    // Validar que los campos necesarios estén presentes
+    if (!owner || !content) {
+      return res.status(400).json({ message: 'Owner y content son requeridos.' });
+    }
+
+    // Verificar que el owner (user) existe en la base de datos
+    const userExists = await User.findById(owner);
+    if (!userExists) {
+      return res.status(404).json({ message: 'Usuario no encontrado.' });
+    }
+
+    // Crear el comentario
+    const newComment = new Comment({
+      owner,
+      content,
+    });
+
+    // Guardar el comentario en la base de datos
+    await newComment.save();
+    const updateGame = await Game.findByIdAndUpdate(
+      userId,
+      { $push: { comments: newComment._id } },
+      { new: true }
+    );
+    // Devolver la respuesta con el comentario creado
+    res.status(201).json(newComment);
   } catch (error) {
-    return res.status(500).json(error); // If an error occurs, return the error msg
+    console.error(error);
+    res.status(500).json({ message: 'Error al crear el comentario.' });
   }
 };
- */
 
 
 
-/* const putComment = async (req, res) => {
-  console.log(req.body);
-  try {
-    const { id } = req.params; // 
-    const putComment = new User(req.body); // 
-    putComment._id = id; // 
-    const updateComment = await User.findByIdAndUpdate(id, putComment); // 
-    if (!updateComment) {
-      return res.status(404).json({ message: "The Comment ID does not exist" }); //
-    }
-    return res.status(200).json(updateComment); //
-  } catch (error) {
-    return res.status(500).json(error); // 
-  }
-};
- */
-/* const deleteComment = async (req, res) => {
-  try {
-    const { id } = req.params; // Extract the game ID from the request parameters
-    const deleteComment = await Comment.findByIdAndDelete(id); // Find the game by ID and delete it from the database
-    if (!deleteComment) {
-      return res.status(404).json({ message: "The game ID does not exist" }); // If the game ID doesn't exist, return a JSON response with status 404
-    }
-    return res.status(200).json(deleteComment); // Return a JSON response with status 200 containing the deleted game
-  } catch (error) {
-    return res.status(500).json(error); // If an error occurs, return a JSON response with status 500 and the error message
-  }
-}; */
-
-
-
-
-module.exports = {  }
+module.exports = { postComment }

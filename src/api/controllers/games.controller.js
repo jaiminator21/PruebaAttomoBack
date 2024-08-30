@@ -1,4 +1,5 @@
 const Game = require("../models/games.model"); // Import the Game model
+const Comment = require("../models/comment.model"); // Import the Game model
 const { deleteFile } = require("../../middlewares/delete.file"); // Import the deleteFile function
 const cloudinary = require("cloudinary").v2;
 
@@ -14,7 +15,8 @@ const getGames = async (req, res) => {
 
 const getGameById = async (req, res, next) => {
   try {
-    const game = await Game.findById(req.params.id);
+    const game = await Game.findById(req.params.id).populate('comments');
+    console.log(game);
     if (game) {
       res.status(200).json({
         status: 200,
@@ -57,6 +59,8 @@ const postGame = async (req, res) => {
 
 
 const putGame = async (req, res) => {
+  console.log(req.body);
+  
   try {
     const { id } = req.params; // Extract the game ID from the request parameters
     const putGame = new Game(req.body); // Create a new Game instance with updated data from the request body
@@ -83,7 +87,7 @@ const deleteGame = async (req, res) => {
     }
 /*     for (const image of deleteGame.images) {
       if (image.includes("cloudinary")) {
-        deleteFile(image)
+        deleteFile(image)z
       }
     } */
     return res.status(200).json(deleteGame); // Return a JSON response with status 200 containing the deleted game
@@ -103,4 +107,4 @@ const AddVotes = async(req,res)=>{
   }
 }
 
-module.exports = { getGames, getGameById, postGame, putGame, deleteGame,  AddVotes }; // Export the functions getGames, postGame, putGame, and deleteGame for use in other files
+module.exports = { getGames, getGameById, postGame, putGame, deleteGame,  AddVotes, }; // Export the functions getGames, postGame, putGame, and deleteGame for use in other files

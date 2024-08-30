@@ -72,7 +72,16 @@ const logout = (req, res, next) => {
 };
 
 const putUser = async (req, res) => {
-  console.log(req.body);
+  console.log(req);
+  
+  try {
+    const userId = req.params.id;
+    const updatedUser = await User.findByIdAndUpdate(userId, req.body, { new: true });
+    res.json(updatedUser);
+  } catch (error) {
+    res.status(500).json({ message: "Error al actualizar el usuario" });
+  }
+ /*  console.log(req.body);
   try {
     const { id } = req.params; // Extract the game ID from the request parameters
     const putUser = new User(req.body); // Create a new Game instance with updated data from the request body
@@ -84,12 +93,11 @@ const putUser = async (req, res) => {
     return res.status(200).json(updateUser); // Return a JSON response with status 200 containing the updated game
   } catch (error) {
     return res.status(500).json(error); // If an error occurs, return a JSON response with status 500 and the error message
-  }
+  } */
 };
 
 
 const checkSession = (req, res) => {
-  console.log("me llaman");
   try {
     return res.status(201).json(req.user);
   } catch (error) {
