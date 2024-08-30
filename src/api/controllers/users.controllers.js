@@ -106,8 +106,9 @@ const checkSession = (req, res) => {
 
 
 const checkAdmin = (req, res) => {
+  console.log(req.user);
   try {
-    if (req.user === "admin") {
+    if (req.user.role == "admin") {
       return res.status(201).json(req.user);
     }
     return res.status(401).json({message: "Error al actualizar el usuario"});
