@@ -50,11 +50,10 @@ const login = async (req, res) => {
     if (!bcrypt.compareSync(req.body.password, userInfo.password)) { // after decypting the passwords it checks if they are the same
       return res.status(404).json({ message: "The passwords isn't correct" });
     }
-    const token = generateSign(userInfo._id, userInfo.email, userInfo.username, userInfo._id, userInfo.votes); //generates token
+    const token = generateSign(userInfo._id, userInfo.email, userInfo.username, userInfo.votes, userInfo.role); //generates token
     return res.status(200).json({ user: userInfo, token: token });
   } catch (error) {
     console.log(error);
-    
     return res.status(500).json(error);
   }
 };
@@ -106,13 +105,20 @@ const checkSession = (req, res) => {
 };
 
 
-
-const checkVotes = (req, res) => {
+const checkAdmin = (req, res) => {
   try {
-    return res.status(201).json(req.user);
+    if (req.user === "admin") {
+      return res.status(201).json(req.user);
+    }
+    return res.status(401).json({message: "Error al actualizar el usuario"});
   } catch (error) {
     return res.tatus(500).json(error);
   }
 };
 
-module.exports = { register, login, logout, checkSession, putUser };
+
+
+
+
+
+module.exports = { register, login, logout, checkSession, putUser, checkAdmin };

@@ -1,9 +1,9 @@
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
 
-const generateSign = (id, email, username, votes) => { //token generator
-  return jwt.sign({ id, email,username, votes}, process.env.JWT_KEY, {
-    expiresIn: "24h", //token duratio. It will expire in 24h since its generation
+const generateSign = (id, email, username, votes, role) => { //token generator
+  return jwt.sign({ id, email,username, votes, role}, process.env.JWT_KEY, {
+    expiresIn: "24h", //token duration. It will expire in 24h since its generation
   }); 
 };
 const verifySign = (token) => {

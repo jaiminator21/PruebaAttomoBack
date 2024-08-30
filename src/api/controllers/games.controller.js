@@ -31,6 +31,8 @@ const getGameById = async (req, res, next) => {
 };
 
 const postGame = async (req, res) => {
+
+  
   try {
     if (!req.body.name) {
       return res.status(400).json({ message: "Name is required" });
@@ -50,6 +52,8 @@ const postGame = async (req, res) => {
     });
 
     const createdGame = await newGame.save();
+    console.log(createdGame);
+    
     return res.status(201).json(createdGame);
   } catch (error) {
     return res.status(500).json(error);
@@ -59,16 +63,17 @@ const postGame = async (req, res) => {
 
 
 const putGame = async (req, res) => {
-  console.log(req.body);
-  
   try {
     const { id } = req.params; // Extract the game ID from the request parameters
     const putGame = new Game(req.body); // Create a new Game instance with updated data from the request body
     putGame._id = id; // Set the ID of the game instance to update
+    console.log(putGame.cover);
+    
     const updateGame = await Game.findByIdAndUpdate(id, putGame); // Find the game by ID and update it with the new game instance
     if (!updateGame) {
       return res.status(404).json({ message: "The game ID does not exist" }); // If the game ID doesn't exist, return a JSON response with status 404
     }
+    
     return res.status(200).json(updateGame); // Return a JSON response with status 200 containing the updated game
   } catch (error) {
     return res.status(500).json(error); // If an error occurs, return a JSON response with status 500 and the error message
